@@ -20,7 +20,7 @@ const TodoSection = ({ id, color, name }: TodoSectionProps) => {
       todoList.map((todo) => {
         if (todo.todoId !== selectedTodo.todoId) return todo;
         return { ...todo, isCompleted: !todo.isCompleted };
-      })
+      }),
     );
   };
 
@@ -48,6 +48,7 @@ const TodoSection = ({ id, color, name }: TodoSectionProps) => {
           <MdAdd id="addBtn" />
         </AddBtn>
       </GoalArea>
+      {/* goal list가 들어가야함. */}
       <TodoList todos={todoList} color={color} onToggle={handleToggleTodo} />
       <TodoInput
         goalId={id}
