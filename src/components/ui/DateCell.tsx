@@ -1,21 +1,22 @@
 import styled from "styled-components";
-import EmptyGraph from "./EmptyGraph";
+import type { ReactNode } from "react";
 
 interface DateCellProps {
   date: Date | null;
   isToday?: boolean;
   isSelected?: boolean;
   onClick?: () => void;
+  icon?: ReactNode;
 }
 
-const DateCell = ({ date, isToday = false, isSelected = false, onClick }: DateCellProps) => {
+const DateCell = ({ date, isToday = false, isSelected = false, onClick, icon }: DateCellProps) => {
   if (!date) {
     return <Wrapper />;
   }
 
   return (
     <Wrapper onClick={onClick}>
-      <EmptyGraph />
+      {icon}
       {isToday ? (
         <TodayNum $selected={isSelected}>{date.getDate()}</TodayNum>
       ) : (

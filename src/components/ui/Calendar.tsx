@@ -1,26 +1,37 @@
 import styled from "styled-components";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
-import type { CSSProperties } from "react";
-import DateCell from "./DateCell";
-import { useCalendar } from "../../hooks/useCalendar";
+import type { CSSProperties, ReactNode } from "react";
 
 interface CalendarProps {
   style?: CSSProperties;
+  year: number;
+  month: number;
+  weekdays: string[];
+  days: (Date | null)[];
+  onBack: () => void;
+  onForward: () => void;
+  renderCell: (date: Date | null, idx: number) => ReactNode;
 }
 
-const Calendar = ({ style }: CalendarProps) => {
-  const { year, month, weekdays, days, navigate, select, check } =
-    useCalendar();
-
+const Calendar = ({
+  style,
+  year,
+  month,
+  weekdays,
+  days,
+  onBack,
+  onForward,
+  renderCell,
+}: CalendarProps) => {
   return (
-    <Container style={style} id="calendar">
+    <Container style={style}>
       <Header>
         <CurrentDate>
           {year}년 {month}월
         </CurrentDate>
         <Control>
-          <MdArrowBackIos onClick={navigate.back} />
-          <MdArrowForwardIos onClick={navigate.forward} />
+          <MdArrowBackIos onClick={onBack} />
+          <MdArrowForwardIos onClick={onForward} />
         </Control>
       </Header>
       <Weekdays>
@@ -28,17 +39,7 @@ const Calendar = ({ style }: CalendarProps) => {
           <WeekdayCell key={day}>{day}</WeekdayCell>
         ))}
       </Weekdays>
-      <Days>
-        {days.map((date, idx) => (
-          <DateCell
-            key={date ? date.getTime() : `empty-${idx}`}
-            date={date}
-            isToday={check.isToday(date)}
-            isSelected={check.isSelected(date)}
-            onClick={() => date && select(date)}
-          />
-        ))}
-      </Days>
+      <Days>{days.map((date, idx) => renderCell(date, idx))}</Days>
     </Container>
   );
 };

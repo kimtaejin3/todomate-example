@@ -1,4 +1,4 @@
-import Calendar from "../components/calendar/Calendar";
+import TodoCalendar from "../components/todo/TodoCalendar";
 import { CiCircleMore } from "react-icons/ci";
 import { TbCardsFilled } from "react-icons/tb";
 import TodoSection from "../components/todo/TodoSection";
@@ -29,7 +29,7 @@ const Feed = () => {
               <Profile>
                 <ProfileIcon>
                   <img
-                    src="https://firebasestorage.googleapis.com/v0/b/todomate-28330.appspot.com/o/files%2Fabout.png?alt=media&token=81635221-7b66-426b-9342-d20c2fc36790"
+                    src="https://palmbites.ca/cdn/shop/files/Chocolatemochicookieswithpistachiofilling.png?v=1770226948&width=1780"
                     alt="profileImg"
                   />
                 </ProfileIcon>
@@ -40,10 +40,10 @@ const Feed = () => {
                   </ProfileDescription>
                 </div>
               </Profile>
-              <Calendar style={{ marginTop: "20px", width: "380px" }} />
+              <TodoCalendar style={{ marginTop: "20px", width: "380px" }} />
             </Left>
             <Right>
-              <TodoSection id="1" color="#FF6B6B" name="샘플 목표" />
+              <TodoSection />
             </Right>
           </Container>
         </LayoutWrapper>

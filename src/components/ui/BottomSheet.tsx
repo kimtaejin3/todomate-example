@@ -1,71 +1,17 @@
 import { useSpring, animated } from "@react-spring/web";
-import { useState } from "react";
-import styled from "styled-components";
-import { FaCheck } from "react-icons/fa";
-
-const colors = [
-  "#000",
-  "#282f59",
-  "#1e2f98",
-  "#2857aa",
-  "#0076ff",
-  "#1ba7ec",
-  "#b964f4",
-  "#785cb4",
-  "#7300ab",
-  "#797ef6",
-  "#4b13fe",
-  "#6236ff",
-  "#2f9399",
-  "#45a062",
-  "#346f75",
-  "#8dc540",
-  "#00d43e",
-  "#818a4b",
-  "#fa9b89",
-  "#ff6dc2",
-  "#ff2c9e",
-  "#eb7480",
-  "#f54e5e",
-  "#cb2f49",
-  "#face34",
-  "#ff910d",
-  "#eb6b2b",
-  "#dc9b1d",
-  "#9d7856",
-  "#744523",
-  "#01a8a8",
-  "#00c0a8",
-  "#04df91",
-  "#41d9e7",
-  "#64c3c9",
-  "#70a2db",
-  "#fe6b9a",
-  "#fe93b5",
-  "#fcb2cb",
-  "#c6d657",
-  "#95bb8c",
-  "#608c4d",
-  "#766f85",
-  "#81939c",
-  "#a79b97",
-  "#cfb290",
-  "#b8666b",
-  "#62223c",
-];
+import { useCallback, useState, type ReactNode } from "react";
 
 interface BottomSheetProps {
-  selectedColor: string;
-  onSelectColor: (color: string) => void;
   onClose: () => void;
+  children: (close: () => void) => ReactNode;
 }
 
-const BottomSheet = ({ selectedColor, onSelectColor, onClose }: BottomSheetProps) => {
+const BottomSheet = ({ onClose, children }: BottomSheetProps) => {
   const [terminate, setTerminate] = useState(false);
-  const [currentColor, setCurrentColor] = useState(selectedColor);
+
   const springs = useSpring({
-    from: { height: terminate ? "50%" : "0", opacity: terminate ? "1" : "0" },
-    to: { height: terminate ? "0" : "50%", opacity: terminate ? "0" : "1" },
+    from: { height: terminate ? "60%" : "0", opacity: terminate ? "1" : "0" },
+    to: { height: terminate ? "0" : "60%", opacity: terminate ? "0" : "1" },
   });
 
   const deemSprings = useSpring({
@@ -73,24 +19,12 @@ const BottomSheet = ({ selectedColor, onSelectColor, onClose }: BottomSheetProps
     to: { opacity: terminate ? 0 : 0.2 },
   });
 
-  const handleDeemClick = () => {
+  const close = useCallback(() => {
     setTerminate(true);
     setTimeout(() => {
       onClose();
     }, 500);
-  };
-
-  const handleColorClick = (color: string) => {
-    setCurrentColor(color);
-  };
-
-  const handleConfirmClick = () => {
-    onSelectColor(currentColor);
-    setTerminate(true);
-    setTimeout(() => {
-      onClose();
-    }, 500);
-  };
+  }, [onClose]);
 
   return (
     <div>
@@ -101,7 +35,7 @@ const BottomSheet = ({ selectedColor, onSelectColor, onClose }: BottomSheetProps
           backgroundColor: "#000",
           ...deemSprings,
         }}
-        onClick={handleDeemClick}
+        onClick={close}
       />
       <animated.div
         style={{
@@ -117,46 +51,10 @@ const BottomSheet = ({ selectedColor, onSelectColor, onClose }: BottomSheetProps
           ...springs,
         }}
       >
-        <ColorSelct>
-          {colors.map((color) => (
-            <Color key={color} $color={color} onClick={() => handleColorClick(color)}>
-              {color === currentColor && <FaCheck color="#fff" />}
-            </Color>
-          ))}
-        </ColorSelct>
-        <Btn onClick={handleConfirmClick}>확인</Btn>
+        {children(close)}
       </animated.div>
     </div>
   );
 };
-
-const ColorSelct = styled.div`
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  row-gap: 20px;
-`;
-
-const Color = styled.div<{ $color: string }>`
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background-color: ${({ $color }) => $color};
-  cursor: pointer;
-  margin: 0 auto;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const Btn = styled.button`
-  border: none;
-  background-color: #f5f5f5;
-  padding: 10px 0;
-  width: 80%;
-  display: block;
-  margin: 40px auto 0;
-  border-radius: 5px;
-  cursor: pointer;
-`;
 
 export default BottomSheet;

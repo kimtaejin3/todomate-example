@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { GrFormPrevious } from "react-icons/gr";
 import { FaAngleDown } from "react-icons/fa";
-import BottomSheet from "../components/ui/BottomSheet";
+import ColorPickerBottomSheet from "../components/goal/ColorPickerBottomSheet";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Button from "../components/ui/Button";
@@ -50,7 +50,7 @@ const AddGoal = () => {
         </SelectColor>
 
         {show && (
-          <BottomSheet
+          <ColorPickerBottomSheet
             selectedColor={color}
             onSelectColor={setColor}
             onClose={() => setShow(false)}

@@ -1,24 +1,13 @@
 import styled from "styled-components";
 import { FaCheck } from "react-icons/fa";
-import type { Todo } from "./TodoList";
 
-interface TodoListItemProps {
-  todo: Todo;
-  color: string;
-  onToggle: (todo: Todo) => void;
-}
-
-const TodoListItem = ({ todo, color, onToggle }: TodoListItemProps) => {
+const TodoListItem = () => {
   return (
     <ListItem>
-      <CheckToggle
-        onClick={() => onToggle(todo)}
-        $isCompleted={todo.isCompleted}
-        $color={color}
-      >
-        {todo.isCompleted && <FaCheck color="#fff" />}
+      <CheckToggle $isCompleted={false} $color="#d3d8db">
+        <FaCheck color="#fff" />
       </CheckToggle>
-      <div>{todo.content}</div>
+      <div>할 일 예시</div>
     </ListItem>
   );
 };
