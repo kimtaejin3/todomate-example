@@ -34,7 +34,7 @@ const Feed = () => {
                   />
                 </ProfileIcon>
                 <div>
-                  <Name>CondingLove</Name>
+                  <Name>doochoncoo</Name>
                   <ProfileDescription>
                     프로필에 자기소개를 입력해보세요.
                   </ProfileDescription>

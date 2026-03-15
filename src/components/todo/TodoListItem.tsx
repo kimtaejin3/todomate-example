@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { FaCheck } from "react-icons/fa";
+import { MdDelete, MdEdit } from "react-icons/md";
 
 const TodoListItem = () => {
   return (
@@ -7,7 +8,15 @@ const TodoListItem = () => {
       <CheckToggle $isCompleted={false} $color="#d3d8db">
         <FaCheck color="#fff" />
       </CheckToggle>
-      <div>할 일 예시</div>
+      <Content>할 일 예시</Content>
+      <Actions>
+        <ActionBtn>
+          <MdEdit />
+        </ActionBtn>
+        <ActionBtn>
+          <MdDelete />
+        </ActionBtn>
+      </Actions>
     </ListItem>
   );
 };
@@ -33,6 +42,29 @@ const CheckToggle = styled.button<{ $isCompleted: boolean; $color: string }>`
   align-items: center;
   background-color: ${({ $isCompleted, $color }) =>
     $isCompleted ? $color : "#d3d8db"};
+`;
+
+const Content = styled.div`
+  flex-grow: 1;
+`;
+
+const Actions = styled.div`
+  display: flex;
+  gap: 5px;
+`;
+
+const ActionBtn = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  color: #999;
+
+  &:hover {
+    color: #333;
+  }
 `;
 
 export default TodoListItem;
