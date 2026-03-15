@@ -1,10 +1,38 @@
+import { useState } from "react";
 import styled from "styled-components";
 
-const TodoInput = () => {
+interface TodoInputProps {
+  color: string;
+  onAdd: (content: string) => void;
+  onClose: () => void;
+}
+
+const TodoInput = ({ color, onAdd, onClose }: TodoInputProps) => {
+  const [value, setValue] = useState("");
+
+  const handleSubmit = () => {
+    if (!value.trim()) return;
+    onAdd(value.trim());
+    setValue("");
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") handleSubmit();
+    if (e.key === "Escape") onClose();
+  };
+
   return (
     <Container>
-      <Input type="text" placeholder="할 일 입력" $color="#000" />
-      <Btn>추가</Btn>
+      <Input
+        type="text"
+        placeholder="할 일 입력"
+        $color={color}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        onKeyDown={handleKeyDown}
+        autoFocus
+      />
+      <Btn onClick={handleSubmit}>추가</Btn>
     </Container>
   );
 };

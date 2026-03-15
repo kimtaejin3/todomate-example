@@ -1,19 +1,34 @@
 import { TbCards } from "react-icons/tb";
 import { MdAdd, MdEdit, MdDelete } from "react-icons/md";
 import styled from "styled-components";
+import type { Goal } from "../../types";
 
-const GoalHeader = () => {
+interface GoalHeaderProps {
+  goal: Goal;
+  onAdd: () => void;
+  onUpdate: (name: string) => void;
+  onDelete: () => void;
+}
+
+const GoalHeader = ({ goal, onAdd, onUpdate, onDelete }: GoalHeaderProps) => {
+  const handleEdit = () => {
+    const newName = prompt("목표 이름 수정", goal.name);
+    if (newName && newName.trim()) {
+      onUpdate(newName.trim());
+    }
+  };
+
   return (
     <Container>
       <TbCards style={{ fontSize: "18px" }} />
-      <GoalName $color="#797ef6">목표 이름</GoalName>
-      <AddBtn>
+      <GoalName $color={goal.color}>{goal.name}</GoalName>
+      <AddBtn onClick={onAdd}>
         <MdAdd id="addBtn" />
       </AddBtn>
-      <ActionBtn>
+      <ActionBtn onClick={handleEdit}>
         <MdEdit />
       </ActionBtn>
-      <ActionBtn>
+      <ActionBtn onClick={onDelete}>
         <MdDelete />
       </ActionBtn>
     </Container>

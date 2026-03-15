@@ -6,18 +6,20 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Button from "../components/ui/Button";
 
-const AddGoal = () => {
+interface AddGoalProps {
+  onAddGoal: (name: string, color: string) => void;
+}
+
+const AddGoal = ({ onAddGoal }: AddGoalProps) => {
   const [show, setShow] = useState(false);
   const [color, setColor] = useState("#000");
   const [goal, setGoal] = useState("");
 
   const navigate = useNavigate();
 
-  const handleColorBtnClick = () => {
-    setShow(true);
-  };
-
   const handleSubmit = () => {
+    if (!goal.trim()) return;
+    onAddGoal(goal, color);
     navigate("/feed");
   };
 
@@ -43,7 +45,7 @@ const AddGoal = () => {
 
         <SelectColor>
           <span>색상</span>
-          <ColorBtn onClick={handleColorBtnClick}>
+          <ColorBtn onClick={() => setShow(true)}>
             <Preview $color={color} />
             <FaAngleDown />
           </ColorBtn>

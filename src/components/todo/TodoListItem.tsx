@@ -1,19 +1,39 @@
 import styled from "styled-components";
 import { FaCheck } from "react-icons/fa";
 import { MdDelete, MdEdit } from "react-icons/md";
+import type { Todo } from "../../types";
 
-const TodoListItem = () => {
+interface TodoListItemProps {
+  todo: Todo;
+  color: string;
+  onToggle: () => void;
+  onUpdate: (content: string) => void;
+  onDelete: () => void;
+}
+
+const TodoListItem = ({ todo, color, onToggle, onUpdate, onDelete }: TodoListItemProps) => {
+  const handleEdit = () => {
+    const newContent = prompt("할 일 수정", todo.content);
+    if (newContent && newContent.trim()) {
+      onUpdate(newContent.trim());
+    }
+  };
+
   return (
     <ListItem>
-      <CheckToggle $isCompleted={false} $color="#d3d8db">
-        <FaCheck color="#fff" />
+      <CheckToggle
+        onClick={onToggle}
+        $isCompleted={todo.isCompleted}
+        $color={color}
+      >
+        {todo.isCompleted && <FaCheck color="#fff" />}
       </CheckToggle>
-      <Content>할 일 예시</Content>
+      <Content $completed={todo.isCompleted}>{todo.content}</Content>
       <Actions>
-        <ActionBtn>
+        <ActionBtn onClick={handleEdit}>
           <MdEdit />
         </ActionBtn>
-        <ActionBtn>
+        <ActionBtn onClick={onDelete}>
           <MdDelete />
         </ActionBtn>
       </Actions>
@@ -44,8 +64,10 @@ const CheckToggle = styled.button<{ $isCompleted: boolean; $color: string }>`
     $isCompleted ? $color : "#d3d8db"};
 `;
 
-const Content = styled.div`
+const Content = styled.div<{ $completed: boolean }>`
   flex-grow: 1;
+  text-decoration: ${({ $completed }) => ($completed ? "line-through" : "none")};
+  color: ${({ $completed }) => ($completed ? "#999" : "inherit")};
 `;
 
 const Actions = styled.div`

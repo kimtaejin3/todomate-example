@@ -2,15 +2,40 @@ import type { CSSProperties } from "react";
 import Calendar from "../ui/Calendar";
 import DateCell from "../ui/DateCell";
 import Graph from "../ui/Graph";
+import TodoGraph from "./TodoGraph";
 import { useCalendar } from "../../hooks/useCalendar";
+import type { Goal, Todo } from "../../types";
+import { formatDate, isSameDate } from "../../util/date";
 
 interface TodoCalendarProps {
   style?: CSSProperties;
+  todos: Todo[];
+  goals: Goal[];
+  selectedDate: Date;
+  onSelectDate: (date: Date) => void;
 }
 
-const TodoCalendar = ({ style }: TodoCalendarProps) => {
-  const { year, month, weekdays, days, navigate, select, check } =
-    useCalendar();
+const TodoCalendar = ({
+  style,
+  todos,
+  goals,
+  selectedDate,
+  onSelectDate,
+}: TodoCalendarProps) => {
+  const { year, month, weekdays, days, navigate, check } = useCalendar();
+
+  const goalColorMap = Object.fromEntries(goals.map((g) => [g.id, g.color]));
+
+  const getTodosForDate = (date: Date) => {
+    const dateStr = formatDate(date);
+    return todos.filter((t) => t.date === dateStr);
+  };
+
+  const getColorsForDate = (dateTodos: Todo[]) => {
+    const completedTodos = dateTodos.filter((t) => t.isCompleted);
+    const goalIds = [...new Set(completedTodos.map((t) => t.goalId))];
+    return goalIds.map((id) => goalColorMap[id]).filter(Boolean);
+  };
 
   return (
     <Calendar
@@ -26,9 +51,15 @@ const TodoCalendar = ({ style }: TodoCalendarProps) => {
           key={date ? date.getTime() : `empty-${idx}`}
           date={date}
           isToday={check.isToday(date)}
-          isSelected={check.isSelected(date)}
-          onClick={() => date && select(date)}
-          icon={date ? <Graph /> : undefined}
+          isSelected={date ? isSameDate(date, selectedDate) : false}
+          onClick={() => date && onSelectDate(date)}
+          icon={date ? (() => {
+            const dateTodos = getTodosForDate(date);
+            if (dateTodos.length === 0) return <Graph />;
+            const colors = getColorsForDate(dateTodos);
+            const remaining = dateTodos.length - dateTodos.filter((t) => t.isCompleted).length;
+            return <TodoGraph colors={colors} remaining={remaining} />;
+          })() : undefined}
         />
       )}
     />

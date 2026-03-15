@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { isSameDate } from "../util/date";
 
 const TODAY = new Date();
 const DAYS = ["일", "월", "화", "수", "목", "금", "토"];
@@ -76,10 +77,3 @@ function getDayesByMon(year: number, mon: number): (Date | null)[] {
   return [...blanks, ...dates];
 }
 
-function isSameDate(a: Date, b: Date) {
-  return (
-    a.getFullYear() === b.getFullYear() &&
-    a.getMonth() === b.getMonth() &&
-    a.getDate() === b.getDate()
-  );
-}
