@@ -1,5 +1,5 @@
 import { TbCards } from "react-icons/tb";
-import { MdAdd } from "react-icons/md";
+import { MdAdd, MdEdit, MdDelete } from "react-icons/md";
 import styled from "styled-components";
 
 const GoalHeader = () => {
@@ -10,6 +10,12 @@ const GoalHeader = () => {
       <AddBtn>
         <MdAdd id="addBtn" />
       </AddBtn>
+      <ActionBtn>
+        <MdEdit />
+      </ActionBtn>
+      <ActionBtn>
+        <MdDelete />
+      </ActionBtn>
     </Container>
   );
 };
@@ -44,6 +50,18 @@ const AddBtn = styled.div`
   justify-content: center;
   align-items: center;
   cursor: pointer;
+`;
+
+const ActionBtn = styled.div`
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  color: #999;
+  font-size: 14px;
+
+  &:hover {
+    color: #333;
+  }
 `;
 
 export default GoalHeader;
