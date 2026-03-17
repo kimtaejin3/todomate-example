@@ -4,25 +4,24 @@ import DateCell from "../ui/DateCell";
 import Graph from "../ui/Graph";
 import TodoGraph from "./TodoGraph";
 import { useCalendar } from "../../hooks/useCalendar";
-import type { Goal, Todo } from "../../types";
+import { useGoals } from "../../hooks/useGoals";
+import { useTodos } from "../../hooks/useTodos";
 import { formatDate, isSameDate } from "../../util/date";
 
 interface TodoCalendarProps {
   style?: CSSProperties;
-  todos: Todo[];
-  goals: Goal[];
   selectedDate: Date;
   onSelectDate: (date: Date) => void;
 }
 
 const TodoCalendar = ({
   style,
-  todos,
-  goals,
   selectedDate,
   onSelectDate,
 }: TodoCalendarProps) => {
   const { year, month, weekdays, days, navigate, check } = useCalendar();
+  const { goals } = useGoals();
+  const { todos } = useTodos();
 
   const goalColorMap = Object.fromEntries(goals.map((g) => [g.id, g.color]));
 
@@ -31,7 +30,7 @@ const TodoCalendar = ({
     return todos.filter((t) => t.date === dateStr);
   };
 
-  const getColorsForDate = (dateTodos: Todo[]) => {
+  const getColorsForDate = (dateTodos: typeof todos) => {
     const completedTodos = dateTodos.filter((t) => t.isCompleted);
     const goalIds = [...new Set(completedTodos.map((t) => t.goalId))];
     return goalIds.map((id) => goalColorMap[id]).filter(Boolean);

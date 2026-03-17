@@ -2,27 +2,27 @@ import styled from "styled-components";
 import { FaCheck } from "react-icons/fa";
 import { MdDelete, MdEdit } from "react-icons/md";
 import type { Todo } from "../../types";
+import { useTodos } from "../../hooks/useTodos";
 
 interface TodoListItemProps {
   todo: Todo;
   color: string;
-  onToggle: () => void;
-  onUpdate: (content: string) => void;
-  onDelete: () => void;
 }
 
-const TodoListItem = ({ todo, color, onToggle, onUpdate, onDelete }: TodoListItemProps) => {
+const TodoListItem = ({ todo, color }: TodoListItemProps) => {
+  const { toggleTodo, updateTodo, deleteTodo } = useTodos();
+
   const handleEdit = () => {
     const newContent = prompt("할 일 수정", todo.content);
     if (newContent && newContent.trim()) {
-      onUpdate(newContent.trim());
+      updateTodo(todo.id, newContent.trim());
     }
   };
 
   return (
     <ListItem>
       <CheckToggle
-        onClick={onToggle}
+        onClick={() => toggleTodo(todo.id)}
         $isCompleted={todo.isCompleted}
         $color={color}
       >
@@ -33,7 +33,7 @@ const TodoListItem = ({ todo, color, onToggle, onUpdate, onDelete }: TodoListIte
         <ActionBtn onClick={handleEdit}>
           <MdEdit />
         </ActionBtn>
-        <ActionBtn onClick={onDelete}>
+        <ActionBtn onClick={() => deleteTodo(todo.id)}>
           <MdDelete />
         </ActionBtn>
       </Actions>

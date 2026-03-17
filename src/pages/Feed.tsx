@@ -5,33 +5,16 @@ import TodoSection from "../components/todo/TodoSection";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import Button from "../components/ui/Button";
-import type { Goal, Todo } from "../types";
 import { formatDate } from "../util/date";
 import { useState } from "react";
+import { useGoals } from "../hooks/useGoals";
+import { useTodos } from "../hooks/useTodos";
 
-interface FeedProps {
-  goals: Goal[];
-  todos: Todo[];
-  onAddTodo: (goalId: number, content: string, date: string) => void;
-  onToggleTodo: (id: number) => void;
-  onUpdateTodo: (id: number, content: string) => void;
-  onDeleteTodo: (id: number) => void;
-  onUpdateGoal: (id: number, name: string) => void;
-  onDeleteGoal: (id: number) => void;
-}
-
-const Feed = ({
-  goals,
-  todos,
-  onAddTodo,
-  onToggleTodo,
-  onUpdateTodo,
-  onDeleteTodo,
-  onUpdateGoal,
-  onDeleteGoal,
-}: FeedProps) => {
+const Feed = () => {
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const { goals } = useGoals();
+  const { todos } = useTodos();
 
   const selectedDateStr = formatDate(selectedDate);
   const filteredTodos = todos.filter((t) => t.date === selectedDateStr);
@@ -70,8 +53,6 @@ const Feed = ({
               </Profile>
               <TodoCalendar
                 style={{ marginTop: "20px", width: "380px" }}
-                todos={todos}
-                goals={goals}
                 selectedDate={selectedDate}
                 onSelectDate={setSelectedDate}
               />
@@ -83,12 +64,6 @@ const Feed = ({
                   goal={goal}
                   todos={filteredTodos.filter((t) => t.goalId === goal.id)}
                   selectedDate={selectedDateStr}
-                  onAddTodo={onAddTodo}
-                  onToggleTodo={onToggleTodo}
-                  onUpdateTodo={onUpdateTodo}
-                  onDeleteTodo={onDeleteTodo}
-                  onUpdateGoal={onUpdateGoal}
-                  onDeleteGoal={onDeleteGoal}
                 />
               ))}
             </Right>
