@@ -125,7 +125,28 @@ Zustand/Jotai로 서버 상태를 관리하면 캐싱, 자동 리페칭, 중복 
 
 ---
 
-## 8. 실무 최적 조합
+## 8. 라이브러리별 가장 큰 차이 — 데이터의 소유권
+
+**데이터의 소유권을 어디에 두는가**가 핵심 차이:
+
+- **useState/Context** — 컴포넌트(React 트리)가 소유. 언마운트되면 상태도 사라짐
+- **Zustand/Jotai** — React 트리 바깥의 store/atom이 소유. 컴포넌트는 구독만
+- **TanStack Query** — 서버가 소유한다는 전제. 클라이언트는 캐시일 뿐
+
+### Context vs 외부 store (Zustand/Jotai)
+
+사용하는 쪽 코드는 거의 비슷하다. `useGoals()` 호출하면 데이터 나오는 건 동일.
+
+**외부 store의 실질적 이점:**
+1. **구독 세밀도** — Context는 값 하나만 바뀌어도 해당 Context 구독자 전체가 리렌더링. 분리하려면 Context를 계속 쪼개야 함 (GoalNameContext, GoalColorContext... 비현실적). Zustand은 `useStore(s => s.goals[0].name)` selector로 원하는 값만 구독 가능
+2. **React 바깥에서 접근** — Zustand은 `getState()`로 컴포넌트 밖에서도 상태 읽기/쓰기 가능. Context는 반드시 컴포넌트 안에서만 접근
+3. **Provider 불필요** — Context는 도메인마다 Provider 중첩 (Provider Hell). Zustand/Jotai는 Provider 자체가 불필요하거나 최소화
+
+**단, 작은 규모에서는 Context로 분리만 잘 하면 충분하다.** 구독 세밀도가 필요해지면 외부 store가 유리해지는 것. 도구의 우열이 아니라 **규모에 따른 선택**의 문제.
+
+---
+
+## 9. 실무 최적 조합
 
 - **서버 상태** → TanStack Query (캐싱, 동기화, 리페칭 전담)
 - **클라이언트/UI 상태** → Zustand 또는 Jotai (가벼운 전역 상태)
