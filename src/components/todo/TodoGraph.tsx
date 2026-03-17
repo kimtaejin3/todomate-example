@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { FaCheck } from "react-icons/fa";
 import Graph from "../ui/Graph";
+import React from "react";
 
 interface TodoGraphProps {
   colors: string[];
@@ -36,4 +37,4 @@ const Count = styled.div`
   align-items: center;
 `;
 
-export default TodoGraph;
+export default React.memo(TodoGraph);

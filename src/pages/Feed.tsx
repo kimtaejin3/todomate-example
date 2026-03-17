@@ -6,11 +6,13 @@ import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import Button from "../components/ui/Button";
 import { useGoals } from "../hooks/useGoals";
+import { useTodos } from "../hooks/useTodos";
 import { useState } from "react";
 
 const Feed = () => {
   const navigate = useNavigate();
-  const { goals } = useGoals();
+  const { goals, loading: goalsLoading, error: goalsError } = useGoals();
+  const { loading: todosLoading, error: todosError } = useTodos();
   const [selectedDate, setSelectedDate] = useState(new Date());
 
   return (
@@ -50,15 +52,22 @@ const Feed = () => {
                 selectedDate={selectedDate}
                 onSelectDate={setSelectedDate}
               />
+              {todosError && <ErrorMsg>{todosError}</ErrorMsg>}
             </Left>
             <Right>
-              {goals.map((goal) => (
-                <TodoSection
-                  key={goal.id}
-                  goal={goal}
-                  selectedDate={selectedDate}
-                />
-              ))}
+              {goalsLoading || todosLoading ? (
+                <LoadingMsg>로딩 중...</LoadingMsg>
+              ) : goalsError ? (
+                <ErrorMsg>{goalsError}</ErrorMsg>
+              ) : (
+                goals.map((goal) => (
+                  <TodoSection
+                    key={goal.id}
+                    goal={goal}
+                    selectedDate={selectedDate}
+                  />
+                ))
+              )}
             </Right>
           </Container>
         </LayoutWrapper>
@@ -139,6 +148,17 @@ const Name = styled.h2`
   font-weight: bold;
   font-size: 18px;
   margin: 0 0 5px;
+`;
+
+const LoadingMsg = styled.div`
+  color: #999;
+  padding: 20px 0;
+`;
+
+const ErrorMsg = styled.div`
+  color: #f54e5e;
+  padding: 10px 0;
+  font-size: 14px;
 `;
 
 export default Feed;

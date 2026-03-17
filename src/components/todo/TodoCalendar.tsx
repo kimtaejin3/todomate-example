@@ -15,7 +15,7 @@ interface TodoCalendarProps {
 }
 
 const TodoCalendar = ({ style, selectedDate, onSelectDate }: TodoCalendarProps) => {
-  const { year, month, weekdays, days, navigate, check } = useCalendar();
+  const { year, month, weekdays, days, navigate, isToday } = useCalendar();
   const { goals } = useGoals();
   const { todos } = useTodos();
 
@@ -45,7 +45,7 @@ const TodoCalendar = ({ style, selectedDate, onSelectDate }: TodoCalendarProps) 
         <DateCell
           key={date ? date.getTime() : `empty-${idx}`}
           date={date}
-          isToday={check.isToday(date)}
+          isToday={isToday(date)}
           isSelected={date ? isSameDate(date, selectedDate) : false}
           onClick={() => date && onSelectDate(date)}
           icon={date ? (() => {

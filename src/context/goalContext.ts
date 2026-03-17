@@ -3,9 +3,11 @@ import type { Goal } from "../types";
 
 export interface GoalContextValue {
   goals: Goal[];
-  addGoal: (name: string, color: string) => void;
-  updateGoal: (id: number, name: string) => void;
-  deleteGoal: (id: number) => void;
+  loading: boolean;
+  error: string | null;
+  addGoal: (name: string, color: string) => Promise<void>;
+  updateGoal: (id: string, name: string) => Promise<void>;
+  deleteGoal: (id: string) => Promise<void>;
 }
 
 export const GoalContext = createContext<GoalContextValue | null>(null);

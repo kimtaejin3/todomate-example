@@ -1,0 +1,97 @@
+{
+  "goals": [
+    {
+      "id": "1",
+      "name": "운동",
+      "color": "#797ef6"
+    },
+    {
+      "id": "2",
+      "name": "공부",
+      "color": "#fe93b5"
+    },
+    {
+      "id": "2d62",
+      "name": "ㅁ",
+      "color": "#00c0a8"
+    },
+    {
+      "id": "7885",
+      "name": "ㅁㅁㅁㅁ",
+      "color": "#fe6b9a"
+    }
+  ],
+  "todos": [
+    {
+      "id": "1",
+      "goalId": "1",
+      "content": "헬스장 가기",
+      "isCompleted": true,
+      "date": "2026-03-15"
+    },
+    {
+      "id": "2",
+      "goalId": "1",
+      "content": "스트레칭",
+      "isCompleted": true,
+      "date": "2026-03-15"
+    },
+    {
+      "id": "3",
+      "goalId": "2",
+      "content": "리액트 공부",
+      "isCompleted": true,
+      "date": "2026-03-15"
+    },
+    {
+      "id": "4",
+      "goalId": "2",
+      "content": "타입스크립트 복습",
+      "isCompleted": true,
+      "date": "2026-03-16"
+    },
+    {
+      "id": "d971",
+      "goalId": "2d62",
+      "content": "ㅁㄴㅇ",
+      "isCompleted": true,
+      "date": "2026-03-16"
+    },
+    {
+      "id": "f24f",
+      "goalId": "2d62",
+      "content": "ㅈㄷㄹㅁ",
+      "isCompleted": true,
+      "date": "2026-03-15"
+    },
+    {
+      "id": "6c8f",
+      "goalId": "2d62",
+      "content": "ㅁㅈㄷㄹ",
+      "isCompleted": true,
+      "date": "2026-03-17"
+    },
+    {
+      "id": "646b",
+      "goalId": "2",
+      "content": "ㅁㅈㄹㄷ",
+      "isCompleted": true,
+      "date": "2026-03-17"
+    },
+    {
+      "id": "ab89",
+      "goalId": "1",
+      "content": "ㅁㅈㄷㄹ",
+      "isCompleted": true,
+      "date": "2026-03-17"
+    },
+    {
+      "id": "40c5",
+      "goalId": "7885",
+      "content": "ㅈㄷㄹ",
+      "isCompleted": true,
+      "date": "2026-03-17"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}

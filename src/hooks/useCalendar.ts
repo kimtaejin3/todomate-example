@@ -7,7 +7,6 @@ const DAYS = ["일", "월", "화", "수", "목", "금", "토"];
 export function useCalendar() {
   const [currentYear, setCurrentYear] = useState(TODAY.getFullYear());
   const [currentMonth, setCurrentMonth] = useState(TODAY.getMonth() + 1);
-  const [selectedDate, setSelectedDate] = useState(TODAY);
 
   const days = useMemo(
     () => getDayesByMon(currentYear, currentMonth),
@@ -32,18 +31,9 @@ export function useCalendar() {
     }
   };
 
-  const selectDate = (date: Date) => {
-    setSelectedDate(date);
-  };
-
   const isToday = (date: Date | null) => {
     if (!date) return false;
     return isSameDate(date, TODAY);
-  };
-
-  const isSelected = (date: Date | null) => {
-    if (!date) return false;
-    return isSameDate(date, selectedDate);
   };
 
   return {
@@ -55,11 +45,7 @@ export function useCalendar() {
       back: goBack,
       forward: goForward,
     },
-    select: selectDate,
-    check: {
-      isToday,
-      isSelected,
-    },
+    isToday,
   };
 }
 

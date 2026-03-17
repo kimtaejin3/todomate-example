@@ -1,45 +1,71 @@
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import type { Todo } from "../types";
 import { TodoContext } from "./todoContext";
-
-const INITIAL_TODOS: Todo[] = [
-  { id: 1, goalId: 1, content: "헬스장 가기", isCompleted: false, date: "2026-03-15" },
-  { id: 2, goalId: 1, content: "스트레칭", isCompleted: true, date: "2026-03-15" },
-  { id: 3, goalId: 2, content: "리액트 공부", isCompleted: false, date: "2026-03-15" },
-  { id: 4, goalId: 2, content: "타입스크립트 복습", isCompleted: false, date: "2026-03-16" },
-];
+import * as api from "../api/todos";
 
 export function TodoProvider({ children }: { children: ReactNode }) {
-  const [todos, setTodos] = useState(INITIAL_TODOS);
+  const [todos, setTodos] = useState<Todo[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const addTodo = (goalId: number, content: string, date: string) => {
-    setTodos((prev) => [
-      ...prev,
-      { id: Date.now(), goalId, content, isCompleted: false, date },
-    ]);
+  useEffect(() => {
+    api.fetchTodos()
+      .then(setTodos)
+      .catch((e) => setError(e.message))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const addTodo = async (goalId: string, content: string, date: string) => {
+    try {
+      const newTodo = await api.createTodo(goalId, content, date);
+      setTodos((prev) => [...prev, newTodo]);
+    } catch (e) {
+      setError((e as Error).message);
+    }
   };
 
-  const toggleTodo = (id: number) => {
-    setTodos((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, isCompleted: !t.isCompleted } : t)),
-    );
+  const toggleTodo = async (id: string) => {
+    const todo = todos.find((t) => t.id === id);
+    if (!todo) return;
+    try {
+      const updated = await api.patchTodo(id, { isCompleted: !todo.isCompleted });
+      setTodos((prev) => prev.map((t) => (t.id === id ? updated : t)));
+    } catch (e) {
+      setError((e as Error).message);
+    }
   };
 
-  const updateTodo = (id: number, content: string) => {
-    setTodos((prev) => prev.map((t) => (t.id === id ? { ...t, content } : t)));
+  const updateTodo = async (id: string, content: string) => {
+    try {
+      const updated = await api.patchTodo(id, { content });
+      setTodos((prev) => prev.map((t) => (t.id === id ? updated : t)));
+    } catch (e) {
+      setError((e as Error).message);
+    }
   };
 
-  const deleteTodo = (id: number) => {
-    setTodos((prev) => prev.filter((t) => t.id !== id));
+  const deleteTodo = async (id: string) => {
+    try {
+      await api.removeTodo(id);
+      setTodos((prev) => prev.filter((t) => t.id !== id));
+    } catch (e) {
+      setError((e as Error).message);
+    }
   };
 
-  const deleteTodosByGoalId = (goalId: number) => {
-    setTodos((prev) => prev.filter((t) => t.goalId !== goalId));
+  const deleteTodosByGoalId = async (goalId: string) => {
+    const targetTodos = todos.filter((t) => t.goalId === goalId);
+    try {
+      await Promise.all(targetTodos.map((t) => api.removeTodo(t.id)));
+      setTodos((prev) => prev.filter((t) => t.goalId !== goalId));
+    } catch (e) {
+      setError((e as Error).message);
+    }
   };
 
   return (
     <TodoContext.Provider
-      value={{ todos, addTodo, toggleTodo, updateTodo, deleteTodo, deleteTodosByGoalId }}
+      value={{ todos, loading, error, addTodo, toggleTodo, updateTodo, deleteTodo, deleteTodosByGoalId }}
     >
       {children}
     </TodoContext.Provider>
