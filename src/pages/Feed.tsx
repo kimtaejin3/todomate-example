@@ -5,36 +5,22 @@ import TodoSection from "../components/todo/TodoSection";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import Button from "../components/ui/Button";
-import type { Goal, Todo } from "../types";
 import { formatDate } from "../util/date";
 import { useState } from "react";
+import { useGoalStore } from "../store/useGoalStore";
+import { useTodoStore } from "../store/useTodoStore";
 
-interface FeedProps {
-  goals: Goal[];
-  todos: Todo[];
-  onAddTodo: (goalId: number, content: string, date: string) => void;
-  onToggleTodo: (id: number) => void;
-  onUpdateTodo: (id: number, content: string) => void;
-  onDeleteTodo: (id: number) => void;
-  onUpdateGoal: (id: number, name: string) => void;
-  onDeleteGoal: (id: number) => void;
-}
-
-const Feed = ({
-  goals,
-  todos,
-  onAddTodo,
-  onToggleTodo,
-  onUpdateTodo,
-  onDeleteTodo,
-  onUpdateGoal,
-  onDeleteGoal,
-}: FeedProps) => {
+const Feed = () => {
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState(new Date());
 
+  const { goals, loading: goalsLoading, error: goalsError } = useGoalStore();
+  const { loading: todosLoading, error: todosError } = useTodoStore();
+
   const selectedDateStr = formatDate(selectedDate);
-  const filteredTodos = todos.filter((t) => t.date === selectedDateStr);
+
+  const loading = goalsLoading || todosLoading;
+  const error = goalsError || todosError;
 
   return (
     <>
@@ -70,27 +56,22 @@ const Feed = ({
               </Profile>
               <TodoCalendar
                 style={{ marginTop: "20px", width: "380px" }}
-                todos={todos}
-                goals={goals}
                 selectedDate={selectedDate}
                 onSelectDate={setSelectedDate}
               />
             </Left>
             <Right>
-              {goals.map((goal) => (
-                <TodoSection
-                  key={goal.id}
-                  goal={goal}
-                  todos={filteredTodos.filter((t) => t.goalId === goal.id)}
-                  selectedDate={selectedDateStr}
-                  onAddTodo={onAddTodo}
-                  onToggleTodo={onToggleTodo}
-                  onUpdateTodo={onUpdateTodo}
-                  onDeleteTodo={onDeleteTodo}
-                  onUpdateGoal={onUpdateGoal}
-                  onDeleteGoal={onDeleteGoal}
-                />
-              ))}
+              {loading && <p>로딩 중...</p>}
+              {error && <p>에러: {error}</p>}
+              {!loading &&
+                !error &&
+                goals.map((goal) => (
+                  <TodoSection
+                    key={goal.id}
+                    goal={goal}
+                    selectedDate={selectedDateStr}
+                  />
+                ))}
             </Right>
           </Container>
         </LayoutWrapper>

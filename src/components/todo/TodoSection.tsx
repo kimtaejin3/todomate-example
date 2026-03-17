@@ -2,53 +2,31 @@ import { useState } from "react";
 import GoalHeader from "../goal/GoalHeader";
 import TodoList from "./TodoList";
 import TodoInput from "./TodoInput";
-import type { Goal, Todo } from "../../types";
+import type { Goal } from "../../types";
+import { useTodoStore } from "../../store/useTodoStore";
 
 interface TodoSectionProps {
   goal: Goal;
-  todos: Todo[];
   selectedDate: string;
-  onAddTodo: (goalId: number, content: string, date: string) => void;
-  onToggleTodo: (id: number) => void;
-  onUpdateTodo: (id: number, content: string) => void;
-  onDeleteTodo: (id: number) => void;
-  onUpdateGoal: (id: number, name: string) => void;
-  onDeleteGoal: (id: number) => void;
 }
 
-const TodoSection = ({
-  goal,
-  todos,
-  selectedDate,
-  onAddTodo,
-  onToggleTodo,
-  onUpdateTodo,
-  onDeleteTodo,
-  onUpdateGoal,
-  onDeleteGoal,
-}: TodoSectionProps) => {
+const TodoSection = ({ goal, selectedDate }: TodoSectionProps) => {
   const [showInput, setShowInput] = useState(false);
+  const { todos, addTodo } = useTodoStore();
+
+  const filteredTodos = todos.filter(
+    (t) => t.goalId === goal.id && t.date === selectedDate,
+  );
 
   return (
     <>
-      <GoalHeader
-        goal={goal}
-        onAdd={() => setShowInput(true)}
-        onUpdate={(name) => onUpdateGoal(goal.id, name)}
-        onDelete={() => onDeleteGoal(goal.id)}
-      />
-      <TodoList
-        todos={todos}
-        color={goal.color}
-        onToggle={onToggleTodo}
-        onUpdate={onUpdateTodo}
-        onDelete={onDeleteTodo}
-      />
+      <GoalHeader goal={goal} onAdd={() => setShowInput(true)} />
+      <TodoList todos={filteredTodos} color={goal.color} />
       {showInput && (
         <TodoInput
           color={goal.color}
-          onAdd={(content) => {
-            onAddTodo(goal.id, content, selectedDate);
+          onAdd={async (content) => {
+            await addTodo(goal.id, content, selectedDate);
             setShowInput(false);
           }}
           onClose={() => setShowInput(false)}

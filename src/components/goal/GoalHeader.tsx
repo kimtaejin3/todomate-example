@@ -2,20 +2,29 @@ import { TbCards } from "react-icons/tb";
 import { MdAdd, MdEdit, MdDelete } from "react-icons/md";
 import styled from "styled-components";
 import type { Goal } from "../../types";
+import { useGoalStore } from "../../store/useGoalStore";
+import { useTodoStore } from "../../store/useTodoStore";
 
 interface GoalHeaderProps {
   goal: Goal;
   onAdd: () => void;
-  onUpdate: (name: string) => void;
-  onDelete: () => void;
 }
 
-const GoalHeader = ({ goal, onAdd, onUpdate, onDelete }: GoalHeaderProps) => {
+const GoalHeader = ({ goal, onAdd }: GoalHeaderProps) => {
+  const updateGoal = useGoalStore((state) => state.updateGoal);
+  const deleteGoal = useGoalStore((state) => state.deleteGoal);
+  const deleteTodosByGoalId = useTodoStore((state) => state.deleteTodosByGoalId);
+
   const handleEdit = () => {
     const newName = prompt("목표 이름 수정", goal.name);
     if (newName && newName.trim()) {
-      onUpdate(newName.trim());
+      updateGoal(goal.id, newName.trim());
     }
+  };
+
+  const handleDelete = async () => {
+    await deleteTodosByGoalId(goal.id);
+    await deleteGoal(goal.id);
   };
 
   return (
@@ -28,7 +37,7 @@ const GoalHeader = ({ goal, onAdd, onUpdate, onDelete }: GoalHeaderProps) => {
       <ActionBtn onClick={handleEdit}>
         <MdEdit />
       </ActionBtn>
-      <ActionBtn onClick={onDelete}>
+      <ActionBtn onClick={handleDelete}>
         <MdDelete />
       </ActionBtn>
     </Container>
