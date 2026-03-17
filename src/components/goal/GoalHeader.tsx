@@ -2,20 +2,26 @@ import { TbCards } from "react-icons/tb";
 import { MdAdd, MdEdit, MdDelete } from "react-icons/md";
 import styled from "styled-components";
 import type { Goal } from "../../types";
+import { useUpdateGoal, useDeleteGoal } from "../../hooks/useGoals";
 
 interface GoalHeaderProps {
   goal: Goal;
   onAdd: () => void;
-  onUpdate: (name: string) => void;
-  onDelete: () => void;
 }
 
-const GoalHeader = ({ goal, onAdd, onUpdate, onDelete }: GoalHeaderProps) => {
+const GoalHeader = ({ goal, onAdd }: GoalHeaderProps) => {
+  const updateGoalMutation = useUpdateGoal();
+  const deleteGoalMutation = useDeleteGoal();
+
   const handleEdit = () => {
     const newName = prompt("목표 이름 수정", goal.name);
     if (newName && newName.trim()) {
-      onUpdate(newName.trim());
+      updateGoalMutation.mutate({ id: goal.id, name: newName.trim() });
     }
+  };
+
+  const handleDelete = () => {
+    deleteGoalMutation.mutate(goal.id);
   };
 
   return (
@@ -28,7 +34,7 @@ const GoalHeader = ({ goal, onAdd, onUpdate, onDelete }: GoalHeaderProps) => {
       <ActionBtn onClick={handleEdit}>
         <MdEdit />
       </ActionBtn>
-      <ActionBtn onClick={onDelete}>
+      <ActionBtn onClick={handleDelete}>
         <MdDelete />
       </ActionBtn>
     </Container>

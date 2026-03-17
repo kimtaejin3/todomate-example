@@ -2,27 +2,37 @@ import styled from "styled-components";
 import { FaCheck } from "react-icons/fa";
 import { MdDelete, MdEdit } from "react-icons/md";
 import type { Todo } from "../../types";
+import { useToggleTodo, useUpdateTodo, useDeleteTodo } from "../../hooks/useTodos";
 
 interface TodoListItemProps {
   todo: Todo;
   color: string;
-  onToggle: () => void;
-  onUpdate: (content: string) => void;
-  onDelete: () => void;
 }
 
-const TodoListItem = ({ todo, color, onToggle, onUpdate, onDelete }: TodoListItemProps) => {
+const TodoListItem = ({ todo, color }: TodoListItemProps) => {
+  const toggleMutation = useToggleTodo();
+  const updateMutation = useUpdateTodo();
+  const deleteMutation = useDeleteTodo();
+
+  const handleToggle = () => {
+    toggleMutation.mutate({ id: todo.id, isCompleted: !todo.isCompleted });
+  };
+
   const handleEdit = () => {
     const newContent = prompt("할 일 수정", todo.content);
     if (newContent && newContent.trim()) {
-      onUpdate(newContent.trim());
+      updateMutation.mutate({ id: todo.id, content: newContent.trim() });
     }
+  };
+
+  const handleDelete = () => {
+    deleteMutation.mutate(todo.id);
   };
 
   return (
     <ListItem>
       <CheckToggle
-        onClick={onToggle}
+        onClick={handleToggle}
         $isCompleted={todo.isCompleted}
         $color={color}
       >
@@ -33,7 +43,7 @@ const TodoListItem = ({ todo, color, onToggle, onUpdate, onDelete }: TodoListIte
         <ActionBtn onClick={handleEdit}>
           <MdEdit />
         </ActionBtn>
-        <ActionBtn onClick={onDelete}>
+        <ActionBtn onClick={handleDelete}>
           <MdDelete />
         </ActionBtn>
       </Actions>

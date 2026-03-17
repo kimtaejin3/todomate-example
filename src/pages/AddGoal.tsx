@@ -5,22 +5,21 @@ import ColorPickerBottomSheet from "../components/goal/ColorPickerBottomSheet";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Button from "../components/ui/Button";
+import { useAddGoal } from "../hooks/useGoals";
 
-interface AddGoalProps {
-  onAddGoal: (name: string, color: string) => void;
-}
-
-const AddGoal = ({ onAddGoal }: AddGoalProps) => {
+const AddGoal = () => {
   const [show, setShow] = useState(false);
   const [color, setColor] = useState("#000");
   const [goal, setGoal] = useState("");
 
   const navigate = useNavigate();
+  const addGoalMutation = useAddGoal();
 
   const handleSubmit = () => {
     if (!goal.trim()) return;
-    onAddGoal(goal, color);
-    navigate("/feed");
+    addGoalMutation.mutate({ name: goal, color }, {
+      onSuccess: () => navigate("/feed"),
+    });
   };
 
   return (
