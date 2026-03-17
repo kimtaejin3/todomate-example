@@ -12,17 +12,21 @@ import { useState } from "react";
 interface FeedProps {
   goals: Goal[];
   todos: Todo[];
-  onAddTodo: (goalId: number, content: string, date: string) => void;
-  onToggleTodo: (id: number) => void;
-  onUpdateTodo: (id: number, content: string) => void;
-  onDeleteTodo: (id: number) => void;
-  onUpdateGoal: (id: number, name: string) => void;
-  onDeleteGoal: (id: number) => void;
+  loading: boolean;
+  error: string | null;
+  onAddTodo: (goalId: string, content: string, date: string) => void;
+  onToggleTodo: (id: string) => void;
+  onUpdateTodo: (id: string, content: string) => void;
+  onDeleteTodo: (id: string) => void;
+  onUpdateGoal: (id: string, name: string) => void;
+  onDeleteGoal: (id: string) => void;
 }
 
 const Feed = ({
   goals,
   todos,
+  loading,
+  error,
   onAddTodo,
   onToggleTodo,
   onUpdateTodo,
@@ -77,20 +81,24 @@ const Feed = ({
               />
             </Left>
             <Right>
-              {goals.map((goal) => (
-                <TodoSection
-                  key={goal.id}
-                  goal={goal}
-                  todos={filteredTodos.filter((t) => t.goalId === goal.id)}
-                  selectedDate={selectedDateStr}
-                  onAddTodo={onAddTodo}
-                  onToggleTodo={onToggleTodo}
-                  onUpdateTodo={onUpdateTodo}
-                  onDeleteTodo={onDeleteTodo}
-                  onUpdateGoal={onUpdateGoal}
-                  onDeleteGoal={onDeleteGoal}
-                />
-              ))}
+              {loading && <Message>로딩 중...</Message>}
+              {error && <Message>에러: {error}</Message>}
+              {!loading &&
+                !error &&
+                goals.map((goal) => (
+                  <TodoSection
+                    key={goal.id}
+                    goal={goal}
+                    todos={filteredTodos.filter((t) => t.goalId === goal.id)}
+                    selectedDate={selectedDateStr}
+                    onAddTodo={onAddTodo}
+                    onToggleTodo={onToggleTodo}
+                    onUpdateTodo={onUpdateTodo}
+                    onDeleteTodo={onDeleteTodo}
+                    onUpdateGoal={onUpdateGoal}
+                    onDeleteGoal={onDeleteGoal}
+                  />
+                ))}
             </Right>
           </Container>
         </LayoutWrapper>
@@ -171,6 +179,12 @@ const Name = styled.h2`
   font-weight: bold;
   font-size: 18px;
   margin: 0 0 5px;
+`;
+
+const Message = styled.div`
+  padding: 20px;
+  color: #7a7a7a;
+  font-size: 14px;
 `;
 
 export default Feed;

@@ -5,9 +5,9 @@ import type { Todo } from "../../types";
 interface TodoListProps {
   todos: Todo[];
   color: string;
-  onToggle: (id: number) => void;
-  onUpdate: (id: number, content: string) => void;
-  onDelete: (id: number) => void;
+  onToggle: (id: string) => void;
+  onUpdate: (id: string, content: string) => void;
+  onDelete: (id: string) => void;
 }
 
 const TodoList = ({ todos, color, onToggle, onUpdate, onDelete }: TodoListProps) => {

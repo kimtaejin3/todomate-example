@@ -1,0 +1,12 @@
+{
+  "goals": [
+    { "id": "1", "name": "운동", "color": "#797ef6" },
+    { "id": "2", "name": "공부", "color": "#fe93b5" }
+  ],
+  "todos": [
+    { "id": "1", "goalId": "1", "content": "헬스장 가기", "isCompleted": false, "date": "2026-03-15" },
+    { "id": "2", "goalId": "1", "content": "스트레칭", "isCompleted": true, "date": "2026-03-15" },
+    { "id": "3", "goalId": "2", "content": "리액트 공부", "isCompleted": false, "date": "2026-03-15" },
+    { "id": "4", "goalId": "2", "content": "타입스크립트 복습", "isCompleted": false, "date": "2026-03-16" }
+  ]
+}

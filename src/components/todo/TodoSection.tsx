@@ -8,12 +8,12 @@ interface TodoSectionProps {
   goal: Goal;
   todos: Todo[];
   selectedDate: string;
-  onAddTodo: (goalId: number, content: string, date: string) => void;
-  onToggleTodo: (id: number) => void;
-  onUpdateTodo: (id: number, content: string) => void;
-  onDeleteTodo: (id: number) => void;
-  onUpdateGoal: (id: number, name: string) => void;
-  onDeleteGoal: (id: number) => void;
+  onAddTodo: (goalId: string, content: string, date: string) => void;
+  onToggleTodo: (id: string) => void;
+  onUpdateTodo: (id: string, content: string) => void;
+  onDeleteTodo: (id: string) => void;
+  onUpdateGoal: (id: string, name: string) => void;
+  onDeleteGoal: (id: string) => void;
 }
 
 const TodoSection = ({

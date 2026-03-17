@@ -2,82 +2,79 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Feed from "./pages/Feed";
 import AddGoal from "./pages/AddGoal";
 import type { Goal, Todo } from "./types";
-import { useState } from "react";
-
-const GOALS: Goal[] = [
-  { id: 1, name: "운동", color: "#797ef6" },
-  { id: 2, name: "공부", color: "#fe93b5" },
-];
-
-const TODOS: Todo[] = [
-  {
-    id: 1,
-    goalId: 1,
-    content: "헬스장 가기",
-    isCompleted: false,
-    date: "2026-03-15",
-  },
-  {
-    id: 2,
-    goalId: 1,
-    content: "스트레칭",
-    isCompleted: true,
-    date: "2026-03-15",
-  },
-  {
-    id: 3,
-    goalId: 2,
-    content: "리액트 공부",
-    isCompleted: false,
-    date: "2026-03-15",
-  },
-  {
-    id: 4,
-    goalId: 2,
-    content: "타입스크립트 복습",
-    isCompleted: false,
-    date: "2026-03-16",
-  },
-];
+import { useState, useEffect } from "react";
+import { fetchGoals, createGoal, patchGoal, removeGoal } from "./api/goals";
+import {
+  fetchTodos,
+  createTodo,
+  patchTodo,
+  removeTodo,
+} from "./api/todos";
 
 function App() {
-  const [goals, setGoals] = useState(GOALS);
-  const [todos, setTodos] = useState(TODOS);
+  const [goals, setGoals] = useState<Goal[]>([]);
+  const [todos, setTodos] = useState<Todo[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const addGoal = (name: string, color: string) => {
-    setGoals([...goals, { id: Date.now(), name, color }]);
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const [goalsData, todosData] = await Promise.all([
+          fetchGoals(),
+          fetchTodos(),
+        ]);
+        setGoals(goalsData);
+        setTodos(todosData);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "데이터를 불러오지 못했습니다.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, []);
+
+  const addGoal = async (name: string, color: string) => {
+    const newGoal = await createGoal(name, color);
+    setGoals((prev) => [...prev, newGoal]);
   };
 
-  const updateGoal = (id: number, name: string) => {
-    setGoals(goals.map((g) => (g.id === id ? { ...g, name } : g)));
+  const updateGoal = async (id: string, name: string) => {
+    const updated = await patchGoal(id, name);
+    setGoals((prev) => prev.map((g) => (g.id === id ? updated : g)));
   };
 
-  const deleteGoal = (id: number) => {
-    setGoals(goals.filter((g) => g.id !== id));
-    setTodos(todos.filter((t) => t.goalId !== id));
-  };
-
-  const addTodo = (goalId: number, content: string, date: string) => {
-    setTodos([
-      ...todos,
-      { id: Date.now(), goalId, content, isCompleted: false, date },
+  const deleteGoal = async (id: string) => {
+    const relatedTodos = todos.filter((t) => t.goalId === id);
+    await Promise.all([
+      removeGoal(id),
+      ...relatedTodos.map((t) => removeTodo(t.id)),
     ]);
+    setGoals((prev) => prev.filter((g) => g.id !== id));
+    setTodos((prev) => prev.filter((t) => t.goalId !== id));
   };
 
-  const toggleTodo = (id: number) => {
-    setTodos(
-      todos.map((t) =>
-        t.id === id ? { ...t, isCompleted: !t.isCompleted } : t,
-      ),
-    );
+  const addTodo = async (goalId: string, content: string, date: string) => {
+    const newTodo = await createTodo(goalId, content, date);
+    setTodos((prev) => [...prev, newTodo]);
   };
 
-  const updateTodo = (id: number, content: string) => {
-    setTodos(todos.map((t) => (t.id === id ? { ...t, content } : t)));
+  const toggleTodo = async (id: string) => {
+    const todo = todos.find((t) => t.id === id);
+    if (!todo) return;
+    const updated = await patchTodo(id, { isCompleted: !todo.isCompleted });
+    setTodos((prev) => prev.map((t) => (t.id === id ? updated : t)));
   };
 
-  const deleteTodo = (id: number) => {
-    setTodos(todos.filter((t) => t.id !== id));
+  const updateTodo = async (id: string, content: string) => {
+    const updated = await patchTodo(id, { content });
+    setTodos((prev) => prev.map((t) => (t.id === id ? updated : t)));
+  };
+
+  const deleteTodo = async (id: string) => {
+    await removeTodo(id);
+    setTodos((prev) => prev.filter((t) => t.id !== id));
   };
 
   return (
@@ -90,6 +87,8 @@ function App() {
               <Feed
                 goals={goals}
                 todos={todos}
+                loading={loading}
+                error={error}
                 onAddTodo={addTodo}
                 onToggleTodo={toggleTodo}
                 onUpdateTodo={updateTodo}
